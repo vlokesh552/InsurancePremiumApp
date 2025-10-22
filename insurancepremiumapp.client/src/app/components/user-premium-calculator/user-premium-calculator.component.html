@@ -1,0 +1,68 @@
+<div class="container mt-4">
+  <h2>User Details</h2>
+
+  <form class="form" [formGroup]="premiumForm" (ngSubmit)="calculatePremium()">
+
+    <div class="form-group">
+      <label>Name </label>
+      <input formControlName="userName" type="text" class="form-control" />
+      <div *ngIf="premiumForm.get('userName')?.touched && premiumForm.get('userName')?.invalid" class="text-danger">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Age Next Birthday (In Years) </label>
+      <input formControlName="ageNextBirthday" type="number" class="form-control" />
+      <div *ngIf="premiumForm.get('ageNextBirthday')?.touched && premiumForm.get('ageNextBirthday')?.invalid" class="text-danger">
+        <div *ngIf="premiumForm.get('ageNextBirthday')?.errors?.['required']">Age is required.</div>
+        <div *ngIf="premiumForm.get('ageNextBirthday')?.errors?.['min']">Age cannot be less than 1.</div>
+        <div *ngIf="premiumForm.get('ageNextBirthday')?.errors?.['max']">Age cannot be more than 99.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Date of Birth (mm/yyyy) </label>
+      <input formControlName="dateOfBirth" type="month" class="form-control" />
+      <div *ngIf="premiumForm.get('dateOfBirth')?.touched && premiumForm.get('dateOfBirth')?.invalid" class="text-danger">
+        <div *ngIf="premiumForm.get('dateOfBirth')?.errors?.['required']">Date of Birth is required.</div>
+        <div *ngIf="premiumForm.get('dateOfBirth')?.errors?.['pattern']">Enter a valid month/year (YYYY-MM).</div>
+        <div *ngIf="premiumForm.get('dateOfBirth')?.errors?.['futureDate']">Date of Birth cannot be in the future.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Usual Occupation </label>
+      <select *ngIf="occupationsList"
+              formControlName="occupationId" class="form-control">
+        <option value="">-- Select Occupation --</option>
+        <option *ngFor="let occ of occupationsList" [value]="occ?.id">
+          {{ occ?.name }}
+        </option>
+      </select>
+      <div *ngIf="premiumForm.get('occupationId')?.touched && premiumForm.get('occupationId')?.invalid" class="text-danger">
+        Occupation is required.
+      </div>
+      <div style="color:grey; font-style: italic;" *ngIf="(!occupationsList || occupationsList.length === 0)">
+        Loading occupations, please wait...
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Death – Sum Insured </label>
+      <input formControlName="deathSumInsured" type="number" class="form-control" />
+      <div *ngIf="premiumForm.get('deathSumInsured')?.touched && premiumForm.get('deathSumInsured')?.invalid" class="text-danger">
+        <div *ngIf="premiumForm.get('deathSumInsured')?.errors?.['required']">Sum Insured is required.</div>
+        <div *ngIf="premiumForm.get('deathSumInsured')?.errors?.['min']">Sum Insured cannot be less than 1000</div>
+        <div *ngIf="premiumForm.get('deathSumInsured')?.errors?.['max']">Sum Insured cannot be more than 100000000</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit"> Calculate Premium </button>
+    <button type="button" class="btn btn-secondary" (click)="resetForm()"> Reset </button>
+  </form>
+ <div *ngIf="error" class="text-error">{{ error }}</div>
+  <div *ngIf="monthlyPremium !== null" class="text-highlight">
+    Monthly Premium: <strong>{{ monthlyPremium | number:'1.4-4' }}</strong>
+  </div>
+</div>
